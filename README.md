@@ -1,4 +1,4 @@
-# Enviar videos para a claoudflare R2 
+# Enviar videos para a Cloudflare R2 
 
 ## Descrição
 
