@@ -1,0 +1,8 @@
+{
+    "accountId": "ACCOUNT_ID",
+    "accessKeyId": "ACCESS_KEY_ID",
+    "secretAccessKey": "SECRET_ACCESS_KEY",
+    "bucketName": "BUCKET_NAME",
+    "customDomain": "https://domain.com/",
+    "region": "auto"
+}
