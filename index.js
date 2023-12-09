@@ -11,7 +11,7 @@ const path = require('path');
 const fs = require('fs');
 const multer = require('multer');
 
-async function uploadVideo(videoBuffer) {
+async function uploadVideo(videoBuffer, fileName = null) {
     const s3 = new S3Client({
         region: "auto",
         endpoint: `https://${config.accountId}.r2.cloudflarestorage.com`,
@@ -25,7 +25,7 @@ async function uploadVideo(videoBuffer) {
         client: s3,
         params: {
             Bucket: config.bucketName,
-            Key: `${uuidv4()}.mp4`,
+            Key: fileName ?? `${uuidv4()}.mp4`,
             Body: videoBuffer,
             ContentType: 'video/mp4',
         },
@@ -52,14 +52,13 @@ app.post('/upload', upload.single('video'), async (req, res) => {
         return;
     }
 
+    const fileName = file.originalname;
+
     try {
-        const result = await uploadVideo(file.buffer);
+        const result = await uploadVideo(file.buffer, fileName);
         res.redirect('/sucess?video=' + result.Key)
     } catch {
         res.send('Error on upload');
-    } finally {
-        console.log(file.path)
-        // fs.unlinkSync(file.path);
     }
 
 });
