@@ -1,4 +1,3 @@
-
 const express = require('express');
 const app = express();
 const port = 3000;
@@ -6,12 +5,10 @@ const c = require('ansi-colors');
 const { S3Client } = require("@aws-sdk/client-s3");
 const { Upload } = require("@aws-sdk/lib-storage");
 const config = require('./config.json');
-const { v4: uuidv4 } = require('uuid');
 const path = require('path');
-const fs = require('fs');
 const multer = require('multer');
 
-async function uploadVideo(videoBuffer, fileName = null) {
+async function uploadFile(fileBuffer, fileName = null, contentType) {
     const s3 = new S3Client({
         region: "auto",
         endpoint: `https://${config.accountId}.r2.cloudflarestorage.com`,
@@ -25,9 +22,9 @@ async function uploadVideo(videoBuffer, fileName = null) {
         client: s3,
         params: {
             Bucket: config.bucketName,
-            Key: fileName ?? `${uuidv4()}.mp4`,
-            Body: videoBuffer,
-            ContentType: 'video/mp4',
+            Key: fileName,
+            Body: fileBuffer,
+            ContentType: contentType,
         },
     });
 
@@ -38,13 +35,13 @@ app.set('view engine', 'pug')
 app.set('views', path.join(__dirname, 'views'));
 
 app.get('/', (req, res) => {
-    res.render('index', { title: 'Upload video'})
+    res.render('index', { title: 'Upload file'})
 })
 
 const storage = multer.memoryStorage();
 const upload = multer({ storage: storage });
 
-app.post('/upload', upload.single('video'), async (req, res) => {
+app.post('/upload', upload.single('file'), async (req, res) => {
     const file = req.file;
 
     if (!file) {
@@ -53,10 +50,11 @@ app.post('/upload', upload.single('video'), async (req, res) => {
     }
 
     const fileName = file.originalname;
+    const contentType = file.mimetype;
 
     try {
-        const result = await uploadVideo(file.buffer, fileName);
-        res.redirect('/sucess?video=' + result.Key)
+        const result = await uploadFile(file.buffer, fileName, contentType);
+        res.redirect('/sucess?file=' + result.Key)
     } catch {
         res.send('Error on upload');
     }
@@ -65,11 +63,11 @@ app.post('/upload', upload.single('video'), async (req, res) => {
 
 app.get('/sucess', (req, res) => {
     const url = new URL(config.customDomain)
-    url.pathname = req.query.video
+    url.pathname = req.query.file
     res.render('sucess', {
             title: 'Upload sucess',
-            message: `Video uploaded`,
-            videoUrl: url.toString()
+            message: `File uploaded`,
+            fileUrl: url.toString()
         })
 })
 
