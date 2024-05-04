@@ -1,8 +1,8 @@
-# Enviar videos para a Cloudflare R2 
+# Enviar arquivos para a Cloudflare R2 
 
 ## Descrição
 
-Este projeto facilita o envio de vídeos para o bucket da Cloudflare (R2), uma vez que não é possível enviar arquivos com mais de 300 MB pelo painel.
+Este projeto facilita o envio de arquivos para o bucket da Cloudflare (R2), uma vez que não é possível enviar arquivos com mais de 300 MB pelo painel.
 
 ## Como usar
 
@@ -23,5 +23,5 @@ Abra a seguinte url no seu navegador
 http://localhost:3000
 
 
-Selecione o vídeo para o envio e clique em *Upload*
+Selecione o arquivo para o envio e clique em *Upload*
 
